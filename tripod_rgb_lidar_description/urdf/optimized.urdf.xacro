@@ -1,0 +1,264 @@
+<?xml version="1.0" ?>
+<robot name="tripod_macro" version="1.0">
+  <joint name="camera_right_joint" type="fixed">
+    <origin xyz="0.0 0.05 0.015" rpy="0.0 0.0 0.0"/>
+    <parent link="tripod_right_support"/>
+    <child link="camera_right_link"/>
+  </joint>
+  <link name="camera_right_link">
+    <inertial>
+      <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
+      <mass value="0.564"/>
+      <inertia ixx="0.003881243" ixy="0.0" ixz="0.0" iyy="0.00049894" iyz="0.0" izz="0.003879257"/>
+    </inertial>
+    <visual>
+      <origin xyz="-0.03 -0.06 0.0" rpy="3.141592653589793 0.0 1.5707963267948966"/>
+      <geometry>
+        <mesh filename="package://tripod_rgb_lidar_description/meshes/sensors/astra2.dae" scale="1.0 1.0 1.0"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="-0.01 -0.06 0.0" rpy="0.0 0.0 0.0"/>
+      <geometry>
+        <box size="0.04 0.165 0.03"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="camera_right_rgb_joint" type="fixed">
+    <origin xyz="-0.009417334702200374 -0.03946818623934467 0.012891550746214231" rpy="0.035298873417160974 0.011407915191282866 0.005862810888846014"/>
+    <parent link="camera_right_link"/>
+    <child link="camera_right_rgb_frame"/>
+  </joint>
+  <link name="camera_right_rgb_frame"/>
+  <joint name="camera_right_rgb_optical_joint" type="fixed">
+    <origin xyz="0.0 0.0 0.0" rpy="-1.5707963267948966 0.0 -1.5707963267948966"/>
+    <parent link="camera_right_rgb_frame"/>
+    <child link="camera_right_rgb_optical_frame"/>
+  </joint>
+  <link name="camera_right_rgb_optical_frame"/>
+  <joint name="camera_right_depth_joint" type="fixed">
+    <origin xyz="0.0 -0.02 0.0" rpy="0.0 0.0 0.0"/>
+    <parent link="camera_right_link"/>
+    <child link="camera_right_depth_frame"/>
+  </joint>
+  <link name="camera_right_depth_frame"/>
+  <joint name="camera_right_depth_optical_joint" type="fixed">
+    <origin xyz="0.0 0.0 0.0" rpy="-1.5707963267948966 0.0 -1.5707963267948966"/>
+    <parent link="camera_right_depth_frame"/>
+    <child link="camera_right_depth_optical_frame"/>
+  </joint>
+  <link name="camera_right_depth_optical_frame"/>
+  <gazebo reference="camera_right_depth_frame">
+    <sensor name="camera" type="depth">
+      <always_on>true</always_on>
+      <update_rate>20.0</update_rate>
+      <camera>
+        <horizontal_fov>1.0471975511965976</horizontal_fov>
+        <image>
+          <format>B8G8R8</format>
+          <width>640</width>
+          <height>480</height>
+        </image>
+        <clip>
+          <near>0.10</near>
+          <far>8.0</far>
+        </clip>
+      </camera>
+      <plugin filename="libgazebo_ros_openni_kinect.so" name="camera_right_camera_controller">
+        <cameraName>camera_right</cameraName>
+        <alwaysOn>true</alwaysOn>
+        <updateRate>10</updateRate>
+        <imageTopicName>rgb/image_raw</imageTopicName>
+        <depthImageTopicName>depth/image_raw</depthImageTopicName>
+        <pointCloudTopicName>depth/points</pointCloudTopicName>
+        <cameraInfoTopicName>rgb/camera_info</cameraInfoTopicName>
+        <depthImageCameraInfoTopicName>depth/camera_info</depthImageCameraInfoTopicName>
+        <frameName>camera_right_depth_optical_frame</frameName>
+        <baseline>0.1</baseline>
+        <distortion_k1>0.0</distortion_k1>
+        <distortion_k2>0.0</distortion_k2>
+        <distortion_k3>0.0</distortion_k3>
+        <distortion_t1>0.0</distortion_t1>
+        <distortion_t2>0.0</distortion_t2>
+        <pointCloudCutoff>0.4</pointCloudCutoff>
+      </plugin>
+    </sensor>
+  </gazebo>
+  <joint name="velodyne_base_mount_joint" type="fixed">
+    <origin xyz="0.5432097373567719 0.24521735380958518 -0.4774132731372255" rpy="0.9905161200994537 -0.7643841004645208 -0.5840792343936555"/>
+    <parent link="tripod_left_support"/>
+    <child link="velodyne_base_link"/>
+  </joint>
+  <link name="velodyne_base_link">
+    <inertial>
+      <origin xyz="0.0 0.0 0.03585" rpy="0 0 0"/>
+      <mass value="0.83"/>
+      <inertia ixx="0.000908059425" ixy="0.0" ixz="0.0" iyy="0.000908059425" iyz="0.0" izz="0.0011049624"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <mesh filename="package://velodyne_description/meshes/VLP16_base_1.dae"/>
+      </geometry>
+    </visual>
+    <visual>
+      <geometry>
+        <mesh filename="package://velodyne_description/meshes/VLP16_base_2.dae"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0.0 0.0 0.03585" rpy="0.0 0.0 0.0"/>
+      <geometry>
+        <cylinder radius="0.0516" length="0.0717"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="velodyne_base_scan_joint" type="fixed">
+    <origin xyz="0.0 0.0 0.0377" rpy="0.0 0.0 0.0"/>
+    <parent link="velodyne_base_link"/>
+    <child link="velodyne"/>
+  </joint>
+  <link name="velodyne">
+    <inertial>
+      <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
+      <mass value="0.01"/>
+      <inertia ixx="1e-07" ixy="0.0" ixz="0.0" iyy="1e-07" iyz="0.0" izz="1e-07"/>
+    </inertial>
+    <visual>
+      <origin xyz="0.0 0.0 -0.0377" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://velodyne_description/meshes/VLP16_scan.dae"/>
+      </geometry>
+    </visual>
+  </link>
+  <gazebo reference="velodyne">
+    <sensor name="velodyne-VLP16" type="ray">
+      <pose>0 0 0 0 0 0</pose>
+      <visualize>false</visualize>
+      <update_rate>10</update_rate>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>440</samples>
+            <resolution>1</resolution>
+            <min_angle>-3.141592653589793</min_angle>
+            <max_angle>3.141592653589793</max_angle>
+          </horizontal>
+          <vertical>
+            <samples>16</samples>
+            <resolution>1</resolution>
+            <min_angle>-0.2617993877991494</min_angle>
+            <max_angle> 0.2617993877991494</max_angle>
+          </vertical>
+        </scan>
+        <range>
+          <min>0.3</min>
+          <max>131.0</max>
+          <resolution>0.001</resolution>
+        </range>
+        <noise>
+          <type>gaussian</type>
+          <mean>0.0</mean>
+          <stddev>0.0</stddev>
+        </noise>
+      </ray>
+      <plugin filename="libgazebo_ros_velodyne_laser.so" name="gazebo_ros_laser_controller">
+        <topicName>/velodyne_points</topicName>
+        <frameName>velodyne</frameName>
+        <organize_cloud>False</organize_cloud>
+        <min_range>0.9</min_range>
+        <max_range>130.0</max_range>
+        <gaussianNoise>0.008</gaussianNoise>
+      </plugin>
+    </sensor>
+  </gazebo>
+  <material name="grey">
+    <color rgba="0.7 0.7 0.7 1.0"/>
+  </material>
+  <link name="world"/>
+  <link name="tripod">
+    <inertial>
+      <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+      <mass value="1.0"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+    <visual>
+      <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+      <geometry>
+        <mesh filename="package://tripod_rgb_lidar_description/meshes/tripod/tripod.dae" scale="0.04 0.04 0.04"/>
+      </geometry>
+      <material name="grey"/>
+    </visual>
+    <collision name="tripod_collision">
+      <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+      <geometry>
+        <mesh filename="package://tripod_rgb_lidar_description/meshes/tripod/tripod.dae" scale="0.04 0.04 0.04"/>
+      </geometry>
+    </collision>
+  </link>
+  <gazebo reference="tripod">
+    <material>Gazebo/Grey</material>
+    <mu1>50.0</mu1>
+    <mu2>50.0</mu2>
+    <kp>1000000.0</kp>
+    <kd>1.0</kd>
+    <selfCollide>false</selfCollide>
+  </gazebo>
+  <joint name="world_to_tripod" type="fixed">
+    <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+    <parent link="world"/>
+    <child link="tripod"/>
+  </joint>
+  <gazebo reference="tripod">
+    <material>Gazebo/Grey</material>
+    <mu1>50.0</mu1>
+    <mu2>50.0</mu2>
+    <kp>1000000.0</kp>
+    <kd>1.0</kd>
+    <selfCollide>false</selfCollide>
+  </gazebo>
+  <link name="tripod_plate">
+    <inertial>
+      <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+      <mass value="1.0"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+    <visual>
+      <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+      <geometry>
+        <box size="0.04 0.4 0.015"/>
+      </geometry>
+      <material name="grey"/>
+    </visual>
+    <collision name="tripod_collision">
+      <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+      <geometry>
+        <box size="0.04 0.15 0.015"/>
+      </geometry>
+    </collision>
+  </link>
+  <gazebo reference="tripod">
+    <material>Gazebo/Grey</material>
+    <mu1>50.0</mu1>
+    <mu2>50.0</mu2>
+    <kp>1000000.0</kp>
+    <kd>1.0</kd>
+    <selfCollide>false</selfCollide>
+  </gazebo>
+  <joint name="tripod_to_tripod_plate" type="fixed">
+    <origin xyz="0.01 0.03 1.33" rpy="0.0 0.314 0.0"/>
+    <parent link="tripod"/>
+    <child link="tripod_plate"/>
+  </joint>
+  <link name="tripod_left_support"/>
+  <joint name="tripod_plate_to_tripod_left_support" type="fixed">
+    <origin xyz="0.0 0.18 0.0075" rpy="0.0 0.0 0.0"/>
+    <parent link="tripod_plate"/>
+    <child link="tripod_left_support"/>
+  </joint>
+  <link name="tripod_right_support"/>
+  <joint name="tripod_plate_to_tripod_right_support" type="fixed">
+    <origin xyz="0.0 -0.18 0.0075" rpy="0.0 0.0 0.0"/>
+    <parent link="tripod_plate"/>
+    <child link="tripod_right_support"/>
+  </joint>
+</robot>
